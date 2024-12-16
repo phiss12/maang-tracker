@@ -43,21 +43,28 @@ async function getMarketData() {
     const db = client.db(dbName);
 
     // List of collections to fetch data from
-    const stockNames = ["meta", "amazon", "apple", "netflix", "google"];
+    const stockCollections= await db.listCollections().toArray()
+    
     const stockData = {};
 
     await Promise.all(
-      stockNames.map(async (name) => {
+      stockCollections.map(async (collection) => {
         const doc = await db
-          .collection(name)
+          .collection(collection.name)
           .findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
         if (doc) {
-          stockData[name] = formatMarketData(doc);
+          stockData[collection.name] = formatMarketData(doc);
         }
       })
     );
 
-    return stockData;
+    return Object.fromEntries(
+      Object.entries(stockData).sort(([keyA], [keyB]) => {
+        const numA = parseInt(keyA.split('_')[0]); // Extract the number before '_'
+        const numB = parseInt(keyB.split('_')[0]); // Extract the number before '_'
+        return numA - numB; // Sort numerically in ascending order
+      })
+    );
   } catch (err) {
     console.error("Error fetching stock data:", err);
     return null;
