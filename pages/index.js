@@ -6,7 +6,7 @@ export async function getServerSideProps() {
     const db = client.db(process.env.NEXT_PUBLIC_DB_NAME);
 
     // List of collections to fetch data from
-    const stockNames = ["meta", "amazon", "apple", "netflix", "google"];
+    const stockNames = ["meta", "amazon"];
     const stockData = {};
 
     for (const name of stockNames) {
