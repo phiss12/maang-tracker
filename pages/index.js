@@ -1,9 +1,9 @@
-import clientPromise from '/lib/mongodb';
+import clientPromise from '../lib/mongodb';
 
 export async function getServerSideProps() {
   try {
     const client = await clientPromise;
-    const db = client.db(process.env.NEXT_PUBLIC_DB_NAME); // Replace with your database name
+    const db = client.db(process.env.NEXT_PUBLIC_DB_NAME);
 
     // List of collections to fetch data from
     const stockNames = ["meta", "amazon", "apple", "netflix", "google"];
