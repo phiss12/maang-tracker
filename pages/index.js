@@ -1,4 +1,4 @@
-import clientPromise from '/lib/mongodb';
+import { MongoClient } from 'mongodb';
 
 function formatMarketData(doc) {
     if (!doc) return null;
@@ -15,8 +15,11 @@ function formatMarketData(doc) {
 }
 
 export async function getServerSideProps() {
+  const mongoUri = process.env.NEXT_PUBLIC_MONGODB_URI; // Your MongoDB connection string
+
+  let client;
   try {
-    const client = await clientPromise;
+    client = await MongoClient.connect(mongoUri);
     const db = client.db(process.env.NEXT_PUBLIC_DB_NAME);
 
     // Fetch individual stock data
