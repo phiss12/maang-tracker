@@ -28,12 +28,14 @@ export async function getServerSideProps() {
     const client = await getMongoClient();
     const db = client.db(process.env.NEXT_PUBLIC_DB_NAME);
 
-    const metaDoc = await db.collection('meta').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
-    const amazonDoc = await db.collection('amazon').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
-    const appleDoc = await db.collection('apple').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
-    const netflixDoc = await db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
-    const googleDoc = await db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
-
+    const [metaDoc, amazonDoc, appleDoc, netflixDoc, googleDoc] = await Promise.all([
+        db.collection('meta').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+        db.collection('amazon').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+        db.collection('apple').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+        db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+        db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+      ]);
+      
     const stockData = {
       meta: formatMarketData(metaDoc),
       amazon: formatMarketData(amazonDoc),
