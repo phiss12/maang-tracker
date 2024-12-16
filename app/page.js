@@ -43,11 +43,11 @@ async function getMarketData() {
     const db = client.db(dbName);
 
     const [metaDoc, amazonDoc, appleDoc, netflixDoc, googleDoc] = await Promise.all([
-      db.collection('meta').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('amazon').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('apple').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+      db.collection('meta').findOne({ symbol: 'META' }),
+      db.collection('amazon').findOne({ symbol: 'AMZN' }),
+      db.collection('apple').findOne({ symbol: 'AAPL' }),
+      db.collection('netflix').findOne({ symbol: 'NFLX' }),
+      db.collection('google').findOne({ symbol: 'GOOGL' }),
     ]);
 
     return {
