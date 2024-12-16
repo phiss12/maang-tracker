@@ -23,7 +23,7 @@ function formatMarketData(doc) {
   };
 }
 
-export async function getServerSideProps() {
+export async function getStaticProps() {
   try {
     const client = await getMongoClient();
     const db = client.db(process.env.NEXT_PUBLIC_DB_NAME);
@@ -35,7 +35,7 @@ export async function getServerSideProps() {
         db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
         db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
       ]);
-      
+
     const stockData = {
       meta: formatMarketData(metaDoc),
       amazon: formatMarketData(amazonDoc),
@@ -47,7 +47,8 @@ export async function getServerSideProps() {
     return {
       props: {
         stockData,
-      },
+        },
+        revalidate: 60, // Regenerate the page every 60 seconds
     };
   } catch (err) {
     console.error(err);
