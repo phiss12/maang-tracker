@@ -6,7 +6,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function Page() {
-  const stockData = {};
+  const stockData = await getMarketData();
 
   if (!stockData) {
     return <h1 style={{ color: 'red' }}>Failed to fetch stock data.</h1>;
@@ -70,11 +70,10 @@ async function getMarketData() {
 function formatMarketData(doc) {
   if (!doc) return null;
 
-  const percentageChange = parseFloat(doc.percentageChange);
   return {
     symbol: doc.symbol,
     price: doc.price,
-    percentageChange: Math.abs(percentageChange),
-    down: percentageChange < 0,
+    percentageChange: doc.percentageChange,
+    down: false,
   };
 }
