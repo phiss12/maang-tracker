@@ -43,7 +43,7 @@ export async function getStaticProps() {
         props: {
             stockData,
         },
-        revalidate: 60, // Regenerate the page every 60 seconds
+        revalidate: 0, // Regenerate the page every 60 seconds
     };
     } catch (err) {
     console.error(err);
