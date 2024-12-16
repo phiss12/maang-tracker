@@ -1,33 +1,30 @@
 import { MongoClient } from 'mongodb';
 
 export const metadata = {
-  title: 'Is MAANG Up?',
-  description: 'Check if MAANG stocks are up or down today.',
-};
+  title: 'Is MAANG Up?'};
 
 export const revalidate = 0;
 
 export default async function Page() {
-  const stockData = await getMarketData();
+  const stockData = {};
 
   if (!stockData) {
     return <h1 style={{ color: 'red' }}>Failed to fetch stock data.</h1>;
   }
 
   return (
-    <div style={containerStyle}>
-      <h1 style={mainTextStyle}>MAANG Stock Market Performance</h1>
-      <div style={boxesContainerStyle}>
+    <div className="container">
+      <div className="stocks">
         {Object.entries(stockData).map(([name, stock], index) => (
           <div
             key={index}
-            style={getBoxStyle(stock.down ? 'Down' : 'Up')}
+            className={`stock-card ${stock?.down ? 'down' : 'up'}`}
           >
-            <h2>{stock.symbol}</h2>
-            <p>
-              {stock.down ? 'Down' : 'Up'} by {stock.percentageChange}%
+           <p className="symbol">{stock?.symbol}</p>
+           <p className="status">
+              {stock?.down ? 'Down' : 'Up'} by {stock?.percentageChange}%
             </p>
-            <p>Price: ${stock.price.toFixed(2)}</p>
+            <p className="price">${stock?.price?.toFixed(2)}</p>
           </div>
         ))}
       </div>
@@ -81,44 +78,3 @@ function formatMarketData(doc) {
     down: percentageChange < 0,
   };
 }
-
-
-
-function getBoxStyle(status) {
-  const colors = {
-    Up: '#155724',
-    Down: '#cc9999',
-  };
-  return {
-    backgroundColor: colors[status] || '#cccccc',
-    borderRadius: '10px',
-    padding: '20px',
-    minWidth: '200px',
-    textAlign: 'center',
-    border: '5px solid black',
-  };
-}
-
-const containerStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '100vh',
-  boxSizing: 'border-box',
-};
-
-const mainTextStyle = {
-  margin: 0,
-  textAlign: 'center',
-};
-
-const boxesContainerStyle = {
-  display: 'flex',
-  gap: '20px',
-  justifyContent: 'center',
-  alignItems: 'flex-start',
-  marginTop: '30px',
-  flexWrap: 'wrap',
-};
-  
