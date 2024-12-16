@@ -42,20 +42,14 @@ async function getMarketData() {
     client = await MongoClient.connect(mongoUri);
     const db = client.db(dbName);
 
-    const [metaDoc, amazonDoc, appleDoc, netflixDoc, googleDoc] = await Promise.all([
+    const [metaDoc] = await Promise.all([
       db.collection('meta').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('amazon').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('apple').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+     
     ]);
 
     return {
       meta: formatMarketData(metaDoc),
-      amazon: formatMarketData(amazonDoc),
-      apple: formatMarketData(appleDoc),
-      netflix: formatMarketData(netflixDoc),
-      google: formatMarketData(googleDoc),
+     
     };
   } catch (error) {
     console.error('Error fetching market data:', error);
