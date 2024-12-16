@@ -1,48 +1,54 @@
 import clientPromise from '/lib/mongodb';
 
+function formatMarketData(doc) {
+    if (!doc) return null;
+
+    const percentageChange = parseFloat(doc.percentageChange);
+    const down = percentageChange < 0;
+
+    return {
+        symbol: doc.symbol,
+        price: doc.price,
+        percentageChange: Math.abs(percentageChange),
+        down,
+    };
+}
+
 export async function getServerSideProps() {
   try {
     const client = await clientPromise;
     const db = client.db(process.env.NEXT_PUBLIC_DB_NAME);
 
-    // List of collections to fetch data from
-    const stockNames = ["meta", "amazon"];
-    const stockData = {};
+    // Fetch individual stock data
+    const metaDoc = await db.collection('meta').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
+    const amazonDoc = await db.collection('amazon').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
+    const appleDoc = await db.collection('apple').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
+    const netflixDoc = await db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
+    const googleDoc = await db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
 
-    for (const name of stockNames) {
-      const collection = db.collection(name);
-
-      // Fetch documents with required fields
-      const documents = await collection.find({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }).toArray();
-
-      // Process each document and store in stockData
-      for (const doc of documents) {
-        const percentageChange = parseFloat(doc.percentageChange);
-        const down = percentageChange < 0;
-
-        stockData[name] = {
-          symbol: doc.symbol,
-          price: doc.price,
-          percentageChange: Math.abs(percentageChange),
-          down,
-        };
-      }
-    }
+    // Process and format the data
+    const stockData = {
+    meta: formatMarketData(metaDoc),
+    amazon: formatMarketData(amazonDoc),
+    apple: formatMarketData(appleDoc),
+    netflix: formatMarketData(netflixDoc),
+    google: formatMarketData(googleDoc),
+    };
 
     return {
-      props: {
-        stockData,
-      },
+        props: {
+            stockData,
+        },
     };
-  } catch (err) {
+    } catch (err) {
     console.error(err);
     return {
-      props: {
-        stockData: {},
-        error: 'Failed to fetch stock data.',
-      },
+        props: {
+            stockData: {},
+            error: 'Failed to fetch stock data.',
+        },
     };
-  }
+    }
 }
 
 const Home = ({ stockData, error }) => {
