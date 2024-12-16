@@ -15,7 +15,7 @@ function formatMarketData(doc) {
 }
 
 export async function getServerSideProps() {
-  const mongoUri = process.env.NEXT_PUBLIC_MONGODB_URI; // Your MongoDB connection string
+  const mongoUri = process.env.NEXT_PUBLIC_MONGODB_URI;
 
   let client;
   try {
@@ -59,20 +59,7 @@ const Home = ({ stockData, error }) => {
 
   return (
     <div className="container">
-      <div className="stocks">
-        {Object.entries(stockData).map(([name, stock], index) => (
-          <div
-            key={index}
-            className={`stock-card ${stock.down ? 'down' : 'up'}`}
-          >
-            <p className="symbol">{stock.symbol}</p>
-            <p className="status">
-              {stock.down ? 'Down' : 'Up'} by {stock.percentageChange}%
-            </p>
-            <p className="price">${stock.price.toFixed(2)}</p>
-          </div>
-        ))}
-      </div>
+     
     </div>
   );
 };
