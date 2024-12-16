@@ -43,11 +43,11 @@ async function getMarketData() {
     const db = client.db(dbName);
 
     const [metaDoc, amazonDoc, appleDoc, netflixDoc, googleDoc] = await Promise.all([
-      db.collection('meta').findOne({ symbol: 'META' }),
-      db.collection('amazon').findOne({ symbol: 'AMZN' }),
-      db.collection('apple').findOne({ symbol: 'AAPL' }),
-      db.collection('netflix').findOne({ symbol: 'NFLX' }),
-      db.collection('google').findOne({ symbol: 'GOOGL' }),
+      db.collection('meta').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+      db.collection('amazon').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+      db.collection('apple').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+      db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
+      db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
     ]);
 
     return {
@@ -70,10 +70,11 @@ async function getMarketData() {
 function formatMarketData(doc) {
   if (!doc) return null;
 
+  const percentageChange = parseFloat(doc.percentageChange);
   return {
     symbol: doc.symbol,
     price: doc.price,
-    percentageChange: doc.percentageChange,
-    down: false,
+    percentageChange: Math.abs(percentageChange),
+    down: percentageChange < 0,
   };
 }
