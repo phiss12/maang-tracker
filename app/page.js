@@ -1,27 +1,22 @@
 import { MongoClient } from 'mongodb';
 
-export const metadata = {
-  title: 'Is MAANG Up?'};
-
-export const revalidate = 0;
+// Adjust revalidate time to control how often data updates
+export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function Page() {
   const stockData = await getMarketData();
 
-  if (!stockData) {
+  if (!stockData || Object.keys(stockData).length === 0) {
     return <h1 style={{ color: 'red' }}>Failed to fetch stock data.</h1>;
   }
 
   return (
     <div className="container">
       <div className="stocks">
-        {Object.entries(stockData).map(([name, stock], index) => (
-          <div
-            key={index}
-            className={`stock-card ${stock?.down ? 'down' : 'up'}`}
-          >
-           <p className="symbol">{stock?.symbol}</p>
-           <p className="status">
+        {Object.entries(stockData).map(([name, stock]) => (
+          <div key={name} className={`stock-card ${stock?.down ? 'down' : 'up'}`}>
+            <p className="symbol">{stock?.symbol}</p>
+            <p className="status">
               {stock?.down ? 'Down' : 'Up'} by {stock?.percentageChange}%
             </p>
             <p className="price">${stock?.price?.toFixed(2)}</p>
@@ -32,33 +27,39 @@ export default async function Page() {
   );
 }
 
-// Ensure this function remains server-side
+// Fetch stock data from MongoDB
 async function getMarketData() {
   const mongoUri = process.env.NEXT_PUBLIC_MONGODB_URI;
   const dbName = process.env.NEXT_PUBLIC_DB_NAME;
+
+  if (!mongoUri || !dbName) {
+    console.error("Missing environment variables for MongoDB connection.");
+    return null;
+  }
 
   let client;
   try {
     client = await MongoClient.connect(mongoUri);
     const db = client.db(dbName);
 
-    const [metaDoc, amazonDoc, appleDoc, netflixDoc, googleDoc] = await Promise.all([
-      db.collection('meta').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('amazon').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('apple').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('netflix').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-      db.collection('google').findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } }),
-    ]);
+    // List of collections to fetch data from
+    const stockNames = ["meta", "amazon", "apple", "netflix", "google"];
+    const stockData = {};
 
-    return {
-      meta: formatMarketData(metaDoc),
-      amazon: formatMarketData(amazonDoc),
-      apple: formatMarketData(appleDoc),
-      netflix: formatMarketData(netflixDoc),
-      google: formatMarketData(googleDoc),
-    };
-  } catch (error) {
-    console.error('Error fetching market data:', error);
+    await Promise.all(
+      stockNames.map(async (name) => {
+        const doc = await db
+          .collection(name)
+          .findOne({}, { projection: { _id: 0, symbol: 1, price: 1, percentageChange: 1 } });
+        if (doc) {
+          stockData[name] = formatMarketData(doc);
+        }
+      })
+    );
+
+    return stockData;
+  } catch (err) {
+    console.error("Error fetching stock data:", err);
     return null;
   } finally {
     if (client) {
