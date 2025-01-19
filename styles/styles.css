@@ -1,0 +1,127 @@
+/* ========== RESET & BODY STYLING ========== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+  color: #343a40;
+
+  /* 
+    Center the main container in the viewport 
+    (both horizontally and vertically).
+  */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Fill the viewport’s height with some default padding around edges */
+  height: 100vh;
+  padding: 2vw;
+}
+
+/* ========== MAIN CONTAINER ========== */
+/*
+   - By default, let the container take up to 1200px or 95% of viewport width.
+   - This helps avoid overly-wide layouts on large monitors.
+*/
+.container {
+  width: min(95vw, 1200px);
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ========== GRID ========== */
+/* Common grid styles */
+.stocks {
+  display: grid;
+  gap: 2vw;
+  justify-content: center;
+  margin: 0 auto;
+  max-width: 1200px; /* optional max width */
+}
+
+/* ========== HORIZONTAL (landscape) ========== */
+/* Applies when width >= height */
+@media screen and (min-aspect-ratio: 1/1) {
+  .stocks {
+    /* 5 columns, 1 row */
+    grid-template-columns: repeat(5, 1fr);
+    /* If you only want one row, 
+       you could also do `grid-auto-rows: auto;` to ensure minimal row height. */
+  }
+}
+
+/* ========== VERTICAL (portrait) ========== */
+/* Applies when width <= height */
+@media screen and (max-aspect-ratio: 1/1) {
+  .stocks {
+    /* 1 column, 5 rows */
+    grid-template-rows: repeat(5, 1fr);
+    /* If you want exactly 5 items stacked, 
+       each item goes into a separate row. */
+  }
+}
+
+
+/* ========== STOCK CARD ========== */
+/* Using fluid or clamp-based padding so it scales well */
+.stock-card {
+  padding: clamp(1rem, 1.8vw, 2.5rem);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  
+  /* Slight shadow + hover animation */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stock-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ========== STATUS COLORS ========== */
+.up {
+  background-color: #e3fcef;
+  border-color: #28a745;
+  color: #155724;
+}
+
+.down {
+  background-color: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+}
+
+/* ========== TEXT STYLES ========== */
+/* Use clamp() to keep a balanced scaling range */
+.symbol {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: bold;
+  margin-bottom: 1vw;
+}
+
+.status {
+  font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+  margin-bottom: 0.5vw;
+}
+
+.price {
+  font-size: clamp(1rem, 1.8vw, 1.1rem);
+  font-weight: bold;
+}
+
+/* ========== LOADING / ERROR STATES ========== */
+.loading,
+.error {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: bold;
+  color: #6c757d;
+  text-align: center;
+}
+

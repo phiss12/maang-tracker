@@ -1,5 +1,5 @@
 import React from 'react';
-import '/styles/globals.css';
+import '../styles/styles.css';
 import Head from 'next/head';
 
 export const metadata = {
@@ -13,7 +13,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Meta Tags */}
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
         {/* Favicon */}
         <link rel="icon" href="/favicon.ico" />
         
