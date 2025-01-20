@@ -45,7 +45,6 @@ body {
   justify-content: center;
   margin: 0 auto;
   max-width: 1200px; /* optional max width */
-  padding: 0.35rem
 
 }
 
@@ -84,10 +83,10 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.stock-card:hover {
+/* .stock-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
-}
+} */
 
 /* ========== STATUS COLORS ========== */
 .up {
