@@ -45,7 +45,7 @@ body {
   justify-content: center;
   margin: 0 auto;
   max-width: 1200px; /* optional max width */
-  padding: .5rem; /* or 2vw, so the cards aren't pinned to the edge */
+  padding: 0.35rem
 
 }
 
