@@ -1,25 +1,28 @@
-// app/layout.tsx
+import React from 'react';
 import '../styles/styles.css';
-import { Metadata } from 'next';
+import Head from 'next/head';
 
-export const metadata: Metadata = {
-  title: 'Is MAANG Up?',
-  icons: {
-    icon: '/favicon.ico',
-    // or more icons if you like:
-    // apple: '/apple-touch-icon.png',
-    // etc.
-  },
+export const metadata = {
+  title: 'Is MAANG Up?'
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <Head>
+        {/* Meta Tags */}
+        <meta charSet="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        {/* Favicon */}
+        <link rel="icon" href="/favicon.ico" type="image/x-icon"/>
+        
+        {/* Title */}
+        <title>{metadata.title}</title>
+      </Head>
+      <body>
+        {/* Main Content */}
+        {children}
+      </body>
     </html>
   );
 }
